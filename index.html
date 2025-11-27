@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cable Cut Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="app-body">
+
+    <main class="main-container">
+        
+        <!-- INPUT SECTION -->
+        <section class="input-section">
+            <div class="card">
+                <div class="card-header">
+                    <!-- Settings2 Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
+                    <h2 class="font-semibold">Job Configuration</h2>
+                </div>
+
+                <div class="form-stack">
+                    
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label for="reqLengthM">Req. Length (m)</label>
+                            <input type="number" id="reqLengthM" step="0.01" value="3.0">
+                        </div>
+                        <div class="input-group">
+                            <label for="quantity">Quantity</label>
+                            <input type="number" id="quantity" value="2">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="input-label">Cable Marking Unit</label>
+                        <div class="toggle-group">
+                            <button id="btnUnitM" class="btn-toggle active">Meters</button>
+                            <button id="btnUnitFt" class="btn-toggle">Feet</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="input-label">Marking Direction</label>
+                        <div class="toggle-group">
+                            <button id="btnDirAsc" class="btn-toggle active flex-center gap-2">
+                                <!-- ArrowUp01 -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/><path d="M17 10V4h-2"/><path d="M15 10h4"/><rect x="15" y="14" width="4" height="6" rx="2"/></svg>
+                                Ascending
+                            </button>
+                            <button id="btnDirDesc" class="btn-toggle flex-center gap-2">
+                                <!-- ArrowDown10 -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="M17 10V4h-2"/><path d="M15 10h4"/><rect x="15" y="14" width="4" height="6" rx="2"/></svg>
+                                Descending
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="section-divider">
+                        <div class="subsection-header">
+                            <!-- Ruler Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>
+                            <h3 class="font-semibold text-sm">Start Conditions (Spool)</h3>
+                        </div>
+                        
+                        <div class="form-stack-small">
+                            <div class="input-group">
+                                <label for="startDistCm">Distance to first marking (cm)</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="startDistCm" value="5" class="input-with-suffix">
+                                    <span class="input-suffix">cm</span>
+                                </div>
+                                <p class="help-text">Measure from cut end to the first number.</p>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="firstMarkVal">Value of First Marking (<span id="lblFirstMarkUnit">m</span>)</label>
+                                <input type="number" id="firstMarkVal" value="10">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="btnUpdate" class="btn-primary w-full">Update Cut List</button>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- OUTPUT SECTION -->
+        <section class="output-section">
+            <div class="section-header">
+                <h2 class="text-xl font-bold text-slate-800">Cut List</h2>
+            </div>
+
+            <div id="cutListContainer" class="cut-list">
+                <!-- Cut items will be injected here -->
+            </div>
+            
+            <div id="emptyState" class="empty-state hidden">
+                <!-- RefreshCcw Icon -->
+                <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+                <p>Enter quantity and length to generate cut list</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
