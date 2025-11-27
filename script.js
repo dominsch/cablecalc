@@ -31,7 +31,10 @@ const els = {
     btnDirDesc: document.getElementById('btnDirDesc'),
     cutListContainer: document.getElementById('cutListContainer'),
     emptyState: document.getElementById('emptyState'),
-    btnUpdate: document.getElementById('btnUpdate')
+    btnUpdate: document.getElementById('btnUpdate'),
+    btnHelp: document.getElementById('btnHelp'),
+    helpModal: document.getElementById('helpModal'),
+    btnCloseHelp: document.getElementById('btnCloseHelp')
 };
 
 // Initialization
@@ -46,8 +49,16 @@ function init() {
     render();
 
     // Add Event Listeners
-    els.reqLengthM.addEventListener('input', (e) => { state.reqLengthM = e.target.value; });
-    els.quantity.addEventListener('input', (e) => { state.quantity = e.target.value; });
+    els.reqLengthM.addEventListener('input', (e) => { 
+        let val = parseFloat(e.target.value);
+        if (val > 10000) { val = 10000; e.target.value = val; }
+        state.reqLengthM = val; 
+    });
+    els.quantity.addEventListener('input', (e) => { 
+        let val = parseInt(e.target.value);
+        if (val > 100) { val = 100; e.target.value = val; }
+        state.quantity = val; 
+    });
     els.startDistCm.addEventListener('input', (e) => { state.startDistCm = e.target.value; });
     els.firstMarkVal.addEventListener('input', (e) => { state.firstMarkVal = e.target.value; });
 
@@ -56,6 +67,14 @@ function init() {
     
     els.btnDirAsc.addEventListener('click', () => { state.direction = 'asc'; updateToggleButtons(); });
     els.btnDirDesc.addEventListener('click', () => { state.direction = 'desc'; updateToggleButtons(); });
+
+    els.btnHelp.addEventListener('click', () => { els.helpModal.classList.add('open'); });
+    els.btnCloseHelp.addEventListener('click', () => { els.helpModal.classList.remove('open'); });
+    els.helpModal.addEventListener('click', (e) => {
+        if (e.target === els.helpModal) {
+            els.helpModal.classList.remove('open');
+        }
+    });
 
     els.btnUpdate.addEventListener('click', () => { 
         state.cutsCompleted = 0;
@@ -96,46 +115,44 @@ function calculateCuts() {
     const initialDistM = (parseFloat(state.startDistCm) || 0) / 100;
     const M_init = parseInt(state.firstMarkVal) || 0;
     
-    const spacing = state.cableUnit === 'm' ? 1.0 : FOOT_IN_M;
+    const isFeet = state.cableUnit === 'ft';
+    const markStep = isFeet ? 2 : 1;
+    const spacing = isFeet ? (2 * FOOT_IN_M) : 1.0;
     const isAsc = state.direction === 'asc';
 
     // 2. Define the Position of a Mark
     const getMarkPosition = (markValue) => {
         const delta = isAsc ? (markValue - M_init) : (M_init - markValue);
-        return initialDistM + (delta * spacing);
+        const steps = delta / markStep;
+        return initialDistM + (steps * spacing);
     };
 
     // 3. Loop through cuts
     for (let i = 0; i < qty; i++) {
-        const cutStartPos = i * L;
-        const cutEndPos = (i + 1) * L;
+        // Calculate position relative to the current start conditions (which apply to the first uncompleted cut)
+        // If i < cutsCompleted, this calculation projects backwards (which is fine, as we use frozen data for those)
+        const relIndex = i - state.cutsCompleted;
+        const cutStartPos = relIndex * L;
+        const cutEndPos = (relIndex + 1) * L;
         const epsilon = 0.0001;
 
-        let startMarkID, endMarkID;
         let firstVisibleMark = null;
         let lastVisibleMark = null;
         
-        if (isAsc) {
-            const minIndexCalc = M_init + (cutStartPos - initialDistM) / spacing;
-            startMarkID = Math.floor(minIndexCalc + epsilon) + 1;
-            
-            const maxIndexCalc = M_init + (cutEndPos - initialDistM) / spacing;
-            endMarkID = Math.floor(maxIndexCalc + epsilon);
+        // Calculate index k (number of steps from M_init)
+        // pos = initialDistM + k * spacing
+        // k = (pos - initialDistM) / spacing
+        
+        const startK = Math.ceil((cutStartPos - initialDistM) / spacing - epsilon);
+        const endK = Math.floor((cutEndPos - initialDistM) / spacing + epsilon);
 
-            if (startMarkID <= endMarkID) {
-                firstVisibleMark = startMarkID;
-                lastVisibleMark = endMarkID;
-            }
-        } else {
-            const maxIndexCalc = M_init - (cutStartPos - initialDistM) / spacing;
-            startMarkID = Math.ceil(maxIndexCalc - epsilon) - 1;
-
-            const minIndexCalc = M_init - (cutEndPos - initialDistM) / spacing;
-            endMarkID = Math.ceil(minIndexCalc - epsilon);
-
-            if (startMarkID >= endMarkID) {
-                firstVisibleMark = startMarkID;
-                lastVisibleMark = endMarkID;
+        if (startK <= endK) {
+            if (isAsc) {
+                firstVisibleMark = M_init + startK * markStep;
+                lastVisibleMark = M_init + endK * markStep;
+            } else {
+                firstVisibleMark = M_init - startK * markStep;
+                lastVisibleMark = M_init - endK * markStep;
             }
         }
 
@@ -146,8 +163,10 @@ function calculateCuts() {
         if (hasMarks) {
             const firstPos = getMarkPosition(firstVisibleMark);
             const lastPos = getMarkPosition(lastVisibleMark);
-            startDistDisplay = Math.round((firstPos - cutStartPos) * 100);
-            endDistDisplay = Math.round((cutEndPos - lastPos) * 100);
+            // Use toFixed(1) for precision, convert back to number for storage if needed, 
+            // but we store as string/number for display.
+            startDistDisplay = ((firstPos - cutStartPos) * 100).toFixed(1);
+            endDistDisplay = ((cutEndPos - lastPos) * 100).toFixed(1);
         }
 
         results.push({
@@ -274,8 +293,14 @@ function render() {
 
 // Global functions for inline onclick handlers
 window.adjustStartDist = function(amount) {
+    // amount is 1 or -1 from the button click, but we want 0.2 increments
+    // We'll ignore the passed amount magnitude and just use sign
+    const sign = amount > 0 ? 1 : -1;
+    const increment = 0.2;
+    
     let current = parseFloat(state.startDistCm) || 0;
-    state.startDistCm = current + amount;
+    state.startDistCm = parseFloat((current + (sign * increment)).toFixed(1));
+    
     // Update input value to reflect change
     els.startDistCm.value = state.startDistCm;
     render();
@@ -288,6 +313,18 @@ window.markAsCut = function(index) {
         state.completedCutsData[index] = currentCuts[index];
     }
     
+    // Update inputs for the next cut
+    const nextCut = currentCuts[index + 1];
+    if (nextCut && nextCut.hasMarks) {
+        // Update state
+        state.startDistCm = parseFloat(nextCut.startDistCm);
+        state.firstMarkVal = nextCut.firstMark;
+        
+        // Update DOM inputs
+        els.startDistCm.value = state.startDistCm;
+        els.firstMarkVal.value = state.firstMarkVal;
+    }
+
     state.cutsCompleted = index + 1;
     render();
 };

@@ -69,7 +69,7 @@ body {
 .text-center { text-align: center; }
 .mx-auto { margin-left: auto; margin-right: auto; }
 .mb-4 { margin-bottom: 1rem; }
-.p-6 { padding: 1.5rem; }
+.p-6 { padding: 1rem; }
 .rounded-lg { border-radius: 0.5rem; }
 .rounded-xl { border-radius: 0.75rem; }
 .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
@@ -79,7 +79,7 @@ body {
 
 /* Grid Layout */
 .main-container {
-    max-width: 64rem;
+    max-width: 86rem;
     margin: 0 auto;
     padding: 2rem 1rem;
     display: grid;
@@ -95,7 +95,7 @@ body {
         grid-column: span 4;
     }
     .output-section {
-        grid-column: span 8;
+        grid-column: span 7;
     }
 }
 
@@ -337,11 +337,12 @@ body {
 
 .cable-jacket {
     position: absolute;
+    margin: 0 4rem;
     left: 0;
     right: 0;
     height: 2.5rem;
     background-color: var(--slate-800);
-    border-radius: 9999px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -366,7 +367,8 @@ body {
 
 .measurement-marker {
     position: absolute;
-    top: -2.5rem;
+    min-width: 8rem;
+    top: -1.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -391,13 +393,14 @@ body {
 }
 
 .measurement-line {
-    height: 2.5rem;
+    height: 2rem;
     width: 2px;
     background-color: var(--red-500);
 }
 
 .markings-container {
     position: absolute;
+    margin: 0 5rem;
     left: 0;
     right: 0;
     display: flex;
@@ -616,4 +619,68 @@ body {
     .print\:w-full { width: 100% !important; grid-column: span 12 !important; }
     body { background-color: white; }
     .cut-item { break-inside: avoid; border: 1px solid #ccc; box-shadow: none; }
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.modal-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    max-width: 56rem;
+    width: 90%;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    position: relative;
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--slate-400);
+}
+
+.modal-close:hover {
+    color: var(--slate-600);
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--slate-400);
+    padding: 0.25rem;
+    border-radius: 0.25rem;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon:hover {
+    color: var(--slate-600);
+    background-color: var(--slate-100);
 }
