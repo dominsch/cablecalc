@@ -62,6 +62,15 @@ function init() {
     els.startDistCm.addEventListener('input', (e) => { state.startDistCm = e.target.value; });
     els.firstMarkVal.addEventListener('input', (e) => { state.firstMarkVal = e.target.value; });
 
+    // Close keyboard on Enter for all inputs
+    [els.reqLengthM, els.quantity, els.startDistCm, els.firstMarkVal].forEach(input => {
+        input.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                input.blur();
+            }
+        });
+    });
+
     els.btnUnitM.addEventListener('click', () => { state.cableUnit = 'm'; updateToggleButtons(); });
     els.btnUnitFt.addEventListener('click', () => { state.cableUnit = 'ft'; updateToggleButtons(); });
     

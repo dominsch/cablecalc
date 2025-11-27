@@ -90,12 +90,18 @@ body {
 @media (min-width: 1024px) {
     .main-container {
         grid-template-columns: repeat(12, 1fr);
+        height: 100vh;
+        overflow: hidden;
     }
     .input-section {
-        grid-column: span 4;
+        grid-column: span 5;
+        overflow-y: auto;
+        padding-right: 1rem;
     }
     .output-section {
         grid-column: span 7;
+        overflow-y: auto;
+        padding-right: 1rem;
     }
 }
 
