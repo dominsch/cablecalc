@@ -5,21 +5,30 @@ const ICONS = {
 
 // State
 const state = {
-    reqLengthM: 3.0,
-    quantity: 2,
-    cableUnit: 'm', // 'm' or 'ft'
+    reqLengthM: 100.0,
+    quantity: 10,
+    cableUnit: 'ft', // 'm' or 'ft'
     direction: 'asc', // 'asc' or 'desc'
-    startDistCm: 5,
-    firstMarkVal: 10,
+    startDistCm: 0,
+    firstMarkVal: 54321,
     cutsCompleted: 0,
-    completedCutsData: {} // Store frozen data for completed cuts
+    completedCutsData: {}, // Store frozen data for completed cuts
+    currentView: 'cut' // 'cut' or 'measure'
 };
 
 // Constants
-const FOOT_IN_M = 0.3048;
+const FOOT_IN_M = 0.3048; // standard conversion
+const CM_IN_M = 0.01;
 
 // DOM Elements
 const els = {
+    // Navigation
+    btnSwitchToMeasure: document.getElementById('btnSwitchToMeasure'),
+    btnSwitchToCut: document.getElementById('btnSwitchToCut'),
+    viewCut: document.getElementById('viewCut'),
+    viewMeasure: document.getElementById('viewMeasure'),
+
+    // Cut Tool
     reqLengthM: document.getElementById('reqLengthM'),
     quantity: document.getElementById('quantity'),
     startDistCm: document.getElementById('startDistCm'),
@@ -32,6 +41,19 @@ const els = {
     cutListContainer: document.getElementById('cutListContainer'),
     emptyState: document.getElementById('emptyState'),
     btnUpdate: document.getElementById('btnUpdate'),
+    
+    // Measure Tool
+    measStartMark: document.getElementById('measStartMark'),
+    measStartOffset: document.getElementById('measStartOffset'),
+    measEndMark: document.getElementById('measEndMark'),
+    measEndOffset: document.getElementById('measEndOffset'),
+    resStartOffset: document.getElementById('resStartOffset'),
+    resEndOffset: document.getElementById('resEndOffset'),
+    resStartMark: document.getElementById('resStartMark'),
+    resEndMark: document.getElementById('resEndMark'),
+    resTotalLength: document.getElementById('resTotalLength'),
+
+    // Shared
     btnHelp: document.getElementById('btnHelp'),
     helpModal: document.getElementById('helpModal'),
     btnCloseHelp: document.getElementById('btnCloseHelp')
@@ -47,6 +69,18 @@ function init() {
 
     updateToggleButtons();
     render();
+
+    // Navigation Listeners
+    els.btnSwitchToMeasure.addEventListener('click', () => switchView('measure'));
+    els.btnSwitchToCut.addEventListener('click', () => switchView('cut'));
+
+    // Measure Tool Listeners
+    [els.measStartMark, els.measStartOffset, els.measEndMark, els.measEndOffset].forEach(input => {
+        input.addEventListener('input', calculateMeasure);
+        input.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') input.blur();
+        });
+    });
 
     // Add Event Listeners
     els.reqLengthM.addEventListener('input', (e) => { 
@@ -90,6 +124,13 @@ function init() {
         state.completedCutsData = {};
         render(); 
     });
+
+    // Check hash on load
+    if (window.location.hash === '#measure') {
+        switchView('measure');
+    } else {
+        switchView('cut');
+    }
 }
 
 function updateToggleButtons() {
@@ -337,6 +378,67 @@ window.markAsCut = function(index) {
     state.cutsCompleted = index + 1;
     render();
 };
+
+function switchView(viewName) {
+    if (state.currentView === viewName) return;
+
+    // Check for unsaved progress in Cut mode
+    const targetTool = viewName === 'cut' ? 'Cut Calculator' : 'Measure Tool';
+    if (!confirm(`Are you sure you want to switch to ${targetTool}?`)) {
+        return;
+    }
+
+    // Reset cut progress if switching away from cut tool
+    if (state.currentView === 'cut' && state.cutsCompleted > 0) {
+        state.cutsCompleted = 0;
+        state.completedCutsData = {};
+        render();
+    }
+
+    state.currentView = viewName;
+
+    // Update UI
+    if (viewName === 'cut') {
+        els.viewCut.classList.remove('hidden');
+        els.viewMeasure.classList.add('hidden');
+        window.location.hash = 'cut';
+    } else {
+        els.viewCut.classList.add('hidden');
+        els.viewMeasure.classList.remove('hidden');
+        window.location.hash = 'measure';
+    }
+}
+
+function calculateMeasure() {
+    const startMark = parseInt(els.measStartMark.value) || 0;
+    const startOffset = parseFloat(els.measStartOffset.value) || 0;
+    const endMark = parseInt(els.measEndMark.value) || 0;
+    const endOffset = parseFloat(els.measEndOffset.value) || 0;
+
+    // Calculate length
+    // Length = |Mark1 - Mark2| (ft) + Offsets (cm)
+    const markDiffFt = Math.abs(endMark - startMark);
+    const totalOffsetCm = startOffset + endOffset;
+    
+    const totalMeters = (markDiffFt * FOOT_IN_M) + (totalOffsetCm * CM_IN_M);
+
+    // Update UI
+    els.resStartMark.textContent = `${startMark}ft`;
+    els.resEndMark.textContent = `${endMark}ft`;
+    els.resStartOffset.innerHTML = `${startOffset}<span class="text-sm">cm</span>`;
+    els.resEndOffset.innerHTML = `${endOffset}<span class="text-sm">cm</span>`;
+    
+    // Format with "gas pump" style for 3rd decimal place
+    const valStr = totalMeters.toFixed(3);
+    const thirdDigit = valStr.slice(-1);
+    
+    if (thirdDigit === '0') {
+        els.resTotalLength.textContent = `${totalMeters.toFixed(2)} m`;
+    } else {
+        const mainPart = valStr.slice(0, -1);
+        els.resTotalLength.innerHTML = `${mainPart}<span class="gas-pump-digit">${thirdDigit}</span> m`;
+    }
+}
 
 // Run
 init();

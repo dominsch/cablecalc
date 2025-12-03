@@ -10,103 +10,180 @@
 
     <main class="main-container">
         
-        <!-- INPUT SECTION -->
-        <section class="input-section">
-            <div class="card">
-                <div class="card-header justify-between">
-                    <div class="flex items-center gap-2">
-                        <!-- Settings2 Icon -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
-                        <h2 class="font-semibold">Job Configuration</h2>
-                    </div>
-                    <button id="btnHelp" class="btn-icon" title="Help">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-                    </button>
-                </div>
+        <!-- CUT VIEW -->
+        <div id="viewCut" class="view-section">
+            <div class="switch-btn-container">
+                <button id="btnSwitchToMeasure" class="btn-link">Measure Tool &rarr;</button>
+            </div>
 
-                <div class="form-stack">
-                    
-                    <div class="form-grid">
-                        <div class="input-group">
-                            <label for="reqLengthM">Target Length (m)</label>
-                            <input type="number" id="reqLengthM" step="0.01" value="3.0" max="10000">
+            <!-- INPUT SECTION -->
+            <section class="input-section">
+                <div class="card">
+                    <div class="card-header justify-between">
+                        <div class="flex items-center gap-2">
+                            <!-- Settings2 Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
+                            <h2 class="font-semibold">Job Configuration</h2>
                         </div>
-                        <div class="input-group">
-                            <label for="quantity">Quantity</label>
-                            <input type="number" id="quantity" value="2" max="100">
-                        </div>
+                        <button id="btnHelp" class="btn-icon" title="Help">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+                        </button>
                     </div>
 
-                    <div>
-                        <label class="input-label">Cable Marking Unit</label>
-                        <div class="toggle-group">
-                            <button id="btnUnitM" class="btn-toggle active">Meters</button>
-                            <button id="btnUnitFt" class="btn-toggle">Feet</button>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="input-label">Length mark number sequence</label>
-                        <div class="toggle-group">
-                            <button id="btnDirAsc" class="btn-toggle active flex-center gap-2">
-                                <!-- ArrowUp01 -->
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/><path d="M17 10V4h-2"/><path d="M15 10h4"/><rect x="15" y="14" width="4" height="6" rx="2"/></svg>
-                                Ascending
-                            </button>
-                            <button id="btnDirDesc" class="btn-toggle flex-center gap-2">
-                                <!-- ArrowDown10 -->
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="M17 10V4h-2"/><path d="M15 10h4"/><rect x="15" y="14" width="4" height="6" rx="2"/></svg>
-                                Descending
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="section-divider">
-                        <div class="subsection-header">
-                            <!-- Ruler Icon -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>
-                            <h3 class="font-semibold text-sm">Start Conditions</h3>
-                        </div>
+                    <div class="form-stack">
                         
-                        <div class="form-stack-small">
+                        <div class="form-grid">
                             <div class="input-group">
-                                <label for="firstMarkVal">First length mark (<span id="lblFirstMarkUnit">m</span>)</label>
-                                <input type="number" id="firstMarkVal" value="10">
+                                <label for="reqLengthM">Target Length (m)</label>
+                                <input type="number" id="reqLengthM" step="0.01" value="3.0" max="10000">
                             </div>
-
                             <div class="input-group">
-                                <label for="startDistCm">Distance to first length mark (cm)</label>
-                                <div class="input-wrapper">
-                                    <input type="number" id="startDistCm" value="5" step="0.1" class="input-with-suffix">
-                                    <span class="input-suffix">cm</span>
-                                </div>
-                                <p class="help-text">Measure from cut end to the first mark.</p>
+                                <label for="quantity">Quantity</label>
+                                <input type="number" id="quantity" value="2" max="100">
                             </div>
                         </div>
+
+                        <div>
+                            <label class="input-label">Cable Marking Unit</label>
+                            <div class="toggle-group">
+                                <button id="btnUnitM" class="btn-toggle active">Meters</button>
+                                <button id="btnUnitFt" class="btn-toggle">Feet</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="input-label">Length mark number sequence</label>
+                            <div class="toggle-group">
+                                <button id="btnDirAsc" class="btn-toggle active flex-center gap-2">
+                                    <!-- ArrowUp01 -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/><path d="M17 10V4h-2"/><path d="M15 10h4"/><rect x="15" y="14" width="4" height="6" rx="2"/></svg>
+                                    Ascending
+                                </button>
+                                <button id="btnDirDesc" class="btn-toggle flex-center gap-2">
+                                    <!-- ArrowDown10 -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="M17 10V4h-2"/><path d="M15 10h4"/><rect x="15" y="14" width="4" height="6" rx="2"/></svg>
+                                    Descending
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="section-divider">
+                            <div class="subsection-header">
+                                <!-- Ruler Icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>
+                                <h3 class="font-semibold text-sm">Start Conditions</h3>
+                            </div>
+                            
+                            <div class="form-stack-small">
+                                <div class="input-group">
+                                    <label for="firstMarkVal">First length mark (<span id="lblFirstMarkUnit">m</span>)</label>
+                                    <input type="number" id="firstMarkVal" value="10">
+                                </div>
+
+                                <div class="input-group">
+                                    <label for="startDistCm">Distance to first length mark (cm)</label>
+                                    <div class="input-wrapper">
+                                        <input type="number" id="startDistCm" value="5" step="0.1" class="input-with-suffix">
+                                        <span class="input-suffix">cm</span>
+                                    </div>
+                                    <p class="help-text">Measure from cut end to the first mark.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button id="btnUpdate" class="btn-primary w-full">Reload Cut List</button>
+
                     </div>
-
-                    <button id="btnUpdate" class="btn-primary w-full">Reload Cut List</button>
-
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- OUTPUT SECTION -->
-        <section class="output-section">
-            <div class="section-header">
-                <h2 class="text-xl font-bold text-slate-800">Cut List</h2>
-            </div>
+            <!-- OUTPUT SECTION -->
+            <section class="output-section">
+                <div class="section-header">
+                    <h2 class="text-xl font-bold text-slate-800">Cut List</h2>
+                </div>
 
-            <div id="cutListContainer" class="cut-list">
-                <!-- Cut items will be injected here -->
+                <div id="cutListContainer" class="cut-list">
+                    <!-- Cut items will be injected here -->
+                </div>
+                
+                <div id="emptyState" class="empty-state hidden">
+                    <!-- RefreshCcw Icon -->
+                    <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+                    <p>Enter quantity and length to generate cut list</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- MEASURE VIEW -->
+        <div id="viewMeasure" class="view-section hidden">
+            <div class="switch-btn-container">
+                <button id="btnSwitchToCut" class="btn-link">&larr; Cut Calculator</button>
             </div>
             
-            <div id="emptyState" class="empty-state hidden">
-                <!-- RefreshCcw Icon -->
-                <svg class="empty-icon" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
-                <p>Enter quantity and length to generate cut list</p>
+            <div class="card max-w-4xl mx-auto">
+                <div class="card-header justify-between">
+                    <div class="flex items-center gap-2">
+                        <!-- Ruler Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg>
+                        <h2 class="font-semibold">Measure Cable</h2>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <!-- Inputs Row -->
+                    <div class="measure-inputs-row mb-8">
+                        <div class="input-group">
+                            <label for="measStartOffset">Offset (cm)</label>
+                            <input type="number" id="measStartOffset" value="0" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label for="measStartMark">Mark (ft)</label>
+                            <input type="number" id="measStartMark" placeholder="0">
+                        </div>
+                        <div class="flex-grow"></div>
+                        <div class="input-group text-right">
+                            <label for="measEndMark">Mark (ft)</label>
+                            <input type="number" id="measEndMark" placeholder="0">
+                        </div>
+                        <div class="input-group text-right">
+                            <label for="measEndOffset">Offset (cm)</label>
+                            <input type="number" id="measEndOffset" value="0" step="0.1">
+                        </div>
+                    </div>
+
+                    <!-- Visual -->
+                    <div class="cut-visual-wrapper mb-8">
+                        <div class="cable-visual-container">
+                            <div class="cable-jacket">
+                                <div class="cable-shine"></div>
+                            </div>
+
+                            <div class="measurement-marker" style="left: 0;">
+                                <div class="measurement-text" id="resStartOffset">0<span class="text-sm">cm</span></div>
+                                <div class="measurement-line"></div>
+                            </div>
+
+                            <div class="measurement-marker" style="right: 0;">
+                                <div class="measurement-text" id="resEndOffset">0<span class="text-sm">cm</span></div>
+                                <div class="measurement-line"></div>
+                            </div>
+                            
+                            <div class="markings-container">
+                                <div class="mark-badge" id="resStartMark">0ft</div>
+                                <div class="mark-badge" id="resEndMark">0ft</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Result -->
+                    <div class="text-center">
+                        <div class="text-sm text-slate-500 font-bold uppercase tracking-wide mb-1">Total Length</div>
+                        <div class="text-4xl font-bold text-slate-800" id="resTotalLength">0.00 m</div>
+                    </div>
+                </div>
             </div>
-        </section>
+        </div>
     </main>
 
     <div id="helpModal" class="modal-overlay">
