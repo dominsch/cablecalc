@@ -80,6 +80,12 @@ function init() {
         input.addEventListener('keyup', (e) => {
             if (e.key === 'Enter') input.blur();
         });
+        input.addEventListener('focus', (e) => { e.target.value = ''; });
+    });
+
+    // Clear input on focus for all Cut Tool inputs
+    [els.reqLengthM, els.quantity, els.startDistCm, els.firstMarkVal].forEach(input => {
+        input.addEventListener('focus', (e) => { e.target.value = ''; });
     });
 
     // Add Event Listeners
