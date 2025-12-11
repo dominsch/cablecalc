@@ -73,6 +73,16 @@ function init() {
     // Navigation Listeners
     els.btnSwitchToMeasure.addEventListener('click', () => switchView('measure'));
     els.btnSwitchToCut.addEventListener('click', () => switchView('cut'));
+    
+    // Debug Toggle
+    const btnToggleDebug = document.getElementById('btnToggleDebug');
+    if (btnToggleDebug) {
+        btnToggleDebug.addEventListener('click', () => {
+            els.cutListContainer.classList.toggle('show-debug');
+            const isShown = els.cutListContainer.classList.contains('show-debug');
+            btnToggleDebug.textContent = isShown ? 'Hide Debug Values' : 'Show Debug Values';
+        });
+    }
 
     // Measure Tool Listeners
     [els.measStartMark, els.measStartOffset, els.measEndMark, els.measEndOffset].forEach(input => {
@@ -225,13 +235,28 @@ function calculateCuts() {
             endDistDisplay = ((cutEndPos - lastPos) * 100).toFixed(1);
         }
 
+        // Calculate exact mark values at cut boundaries for debugging
+        const metersPerUnit = isFeet ? FOOT_IN_M : 1.0;
+        const sign = isAsc ? 1 : -1;
+        
+        const getMarkAtPosition = (posM) => {
+            const distFromInit = posM - initialDistM;
+            const deltaMarks = distFromInit / metersPerUnit;
+            return M_init + (deltaMarks * sign);
+        };
+
+        const startMarkExact = getMarkAtPosition(cutStartPos);
+        const endMarkExact = getMarkAtPosition(cutEndPos);
+
         results.push({
             id: i + 1,
             startDistCm: startDistDisplay,
             firstMark: firstVisibleMark,
             lastMark: lastVisibleMark,
             endDistCm: endDistDisplay,
-            hasMarks
+            hasMarks,
+            startMarkExact,
+            endMarkExact
         });
     }
     
@@ -311,6 +336,37 @@ function render() {
             `;
         }
 
+        // Debug Info
+        const formatDebugMark = (val, unit) => {
+            if (val === undefined || val === null) return '';
+            const otherVal = unit === 'ft' ? val * FOOT_IN_M : val / FOOT_IN_M;
+            const otherUnit = unit === 'ft' ? 'm' : 'ft';
+            return `
+                <div class="debug-info">
+                    <div>${val.toFixed(2)} ${unit}</div>
+                    <div>${otherVal.toFixed(2)} ${otherUnit}</div>
+                </div>
+            `;
+        };
+
+        const startDebugHtml = formatDebugMark(cut.startMarkExact, state.cableUnit);
+        const endDebugHtml = formatDebugMark(cut.endMarkExact, state.cableUnit);
+
+        // Middle Debug Info (Total Length in Feet)
+        let middleDebugHtml = '';
+        if (cut.startMarkExact !== undefined && cut.endMarkExact !== undefined) {
+            // Calculate length in feet based on marks
+            // If unit is ft, diff is ft. If unit is m, diff is m, convert to ft.
+            const diff = Math.abs(cut.endMarkExact - cut.startMarkExact);
+            const lengthInFt = state.cableUnit === 'ft' ? diff : (diff * 3.28084);
+            
+            middleDebugHtml = `
+                <div class="debug-info debug-middle">
+                    Length: ${lengthInFt.toFixed(2)} ft
+                </div>
+            `;
+        }
+
         card.innerHTML = `
             <div class="cut-header">
                 <span style="font-weight: 700; color: var(--slate-400);">#${cut.id}</span>
@@ -328,11 +384,15 @@ function render() {
                             <div class="measurement-marker" style="left: 0;">
                                 ${startDistContent}
                                 <div class="measurement-line"></div>
+                                ${startDebugHtml}
                             </div>
+                            
+                            ${middleDebugHtml}
 
                             <div class="measurement-marker" style="right: 0;">
                                 <div class="measurement-text">${cut.endDistCm}<span class="text-sm">cm</span></div>
                                 <div class="measurement-line"></div>
+                                ${endDebugHtml}
                             </div>
                             
                             <div class="markings-container">

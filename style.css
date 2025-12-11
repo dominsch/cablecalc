@@ -798,3 +798,19 @@ body {
     position: relative;
     top: 0.1em;
 }
+
+.debug-info {
+    background-color: hsl(255, 0%, 90%);
+    display: none;
+}
+
+.show-debug .debug-info {
+    display: block;
+}
+
+.debug-middle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
